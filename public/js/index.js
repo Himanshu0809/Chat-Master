@@ -13,3 +13,11 @@ socket.on('newMessage',function(message){
     console.log("new Message", message);
 });
 
+socket.emit('createMessage',{
+    from:"him",
+    text:"beh",
+    createdAt: new Date().getTime()
+}, function(message){
+    //acknowledging
+    console.log('Got it', message);
+})

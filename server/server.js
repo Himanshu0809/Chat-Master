@@ -1,7 +1,8 @@
 const path = require("path");
-express = require("express"),
+    express = require("express"),
     http = require("http"),
     socketIO = require("socket.io"),
+    {generateMessage}=require("./utils/message"),
     app = express();
 
 app.use(express.static(path.join(__dirname, './../public')));
@@ -15,28 +16,17 @@ io.on('connection', (socket) => {
     console.log("New user connected");
 
     //to send the message to the new user
-    socket.emit('newMessage',{
-        from:"Admin",
-        text:"Welcome to ChatMaster",
-        createdAt: new Date().getTime()
-    })
+    socket.emit('newMessage', generateMessage('Admin', 'Welcome to ChatMaster!'));
 
     //to send the message to all others in the chat that someone has joined
-    socket.broadcast.emit('newMessage',{
-        from:"Admin",
-        text:"New User Joined!",
-        createdAt: new Date().getTime()
-    });
+    socket.broadcast.emit('newMessage',generateMessage('Admin', 'New User Joined!'));
 
     //server listening to the message created by client
-    socket.on('createMessage', (message) => {
+    socket.on('createMessage', (message, callback) => {
         console.log("message created", message);
         //socket.emit will send personally whereas io.emit will send to all even to self i.e. broadcast the message
-        io.emit('newMessage', {
-            from: message.from,
-            text: message.text,
-            createdAt:new Date().getTime()
-        })
+        io.emit('newMessage', generateMessage(message.from, message.text));
+        callback('This is the server: ');
 
         //server creating or emitting a message
         //socket.broadcast.emit will send the message to all excluding self
