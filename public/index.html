@@ -9,18 +9,45 @@
     <title>Chat Master</title>
 </head>
 
-<body>
-    <p>Welcome to the Chat App</p>
+<body class="chat">
 
-    <form id="message-form">
-        <input type="text" name="message" placeholder="message"></input>
-        <button type="submit" id="submit-btn">Submit</button>
-    </form>
+    <div class="chat__sidebar">
+        <h3>People</h3>
+        <div id="users"></div>
+    </div>
 
-    <button type="button" id="send-location">Send Location</button>
+    <div class="chat__main">
+        <ol id="messages" class="chat__messages"></ol>
+
+        <div class="chat__footer">
+            <form id="message-form">
+                <input type="text" name="message" placeholder="Message" autofocus autocomplete="off" >
+                <button id="submit-btn">Send</button>
+            </form>
+            <button id="send-location">Send Location</button>
+        </div>
+    </div>
+
+    <!-- Script tag for mustache.js
+        Mustache.js is used to make a template so we need not to do it with js using setAttribute, appendChild, innerHTML tags -->
+    <script id="message-template" type="text/template">
+        <li class="message">
+            <div class="message__title">
+                <h4>{{from}}</h4>
+                <span>{{createdAt}}</span>
+            </div>
+            <div class="message__body">
+                <p>{{text}}</p>
+            </div>
+        </li>
+    </script>
+    
+
+    
     <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.3.0/socket.io.slim.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.24.0/moment.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/mustache.js/3.1.0/mustache.min.js"></script>
     <script type="text/javascript" src="js/index.js"></script>
 </body>
 

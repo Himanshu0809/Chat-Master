@@ -10,12 +10,16 @@ socket.on('disconnect', function () {
 
 //client listening to message created by the server
 socket.on('newMessage', function (message) {
-    const formattedTime=moment(message.createdAt).format('LT');//to change the time stamp into formatted form using moment.js doc
-    console.log("new Message", message);
-    let li = document.createElement('li');
-    li.innerText = `${message.from} ${formattedTime}: ${message.text}`;
-
-    document.querySelector('body').appendChild(li);
+    const formattedTime=moment(message.createdAt).format('LT');
+    const template=document.querySelector("#message-template").innerHTML;
+    const html =Mustache.render(template,{
+        from:message.from,
+        text:message.text,
+        createdAt:formattedTime
+    });
+    const div = document.createElement('div');
+    div.innerHTML=html;
+    document.querySelector("#messages").appendChild(div);
 });
 
 //client listening to message created by the server
@@ -30,7 +34,7 @@ socket.on('newLocationMessage', function (message) {
     a.innerText='My Current Location';
     li.appendChild(a) ;
 
-    document.querySelector('body').appendChild(li);
+    document.querySelector('messages').appendChild(li);
 });
 
 document.querySelector('#submit-btn').addEventListener('click', function (e) {
