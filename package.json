@@ -4,13 +4,14 @@
   "description": "A chatting application using nodeJS and socket.io",
   "main": "server.js",
   "scripts": {
-    "start":"node server/server.js",
+    "start": "node server/server.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "Himanshu",
   "license": "ISC",
   "dependencies": {
     "express": "^4.17.1",
+    "moment": "^2.24.0",
     "socket.io": "^2.3.0"
   }
 }

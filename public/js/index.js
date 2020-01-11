@@ -17,6 +17,19 @@ socket.on('newMessage', function (message) {
     document.querySelector('body').appendChild(li);
 });
 
+//client listening to message created by the server
+socket.on('newLocationMessage', function (message) {
+    console.log("newLocationMessage", message);
+    let li = document.createElement('li');
+    let a=document.createElement('a');
+    a.setAttribute('target','_blank');  //open another tab
+    a.setAttribute('href',message.url)
+    a.innerText='My Current Location';
+    li.appendChild(a) ;
+
+    document.querySelector('body').appendChild(li);
+});
+
 document.querySelector('#submit-btn').addEventListener('click', function (e) {
     e.preventDefault();
     socket.emit("createMessage", {
