@@ -10,9 +10,10 @@ socket.on('disconnect', function () {
 
 //client listening to message created by the server
 socket.on('newMessage', function (message) {
+    const formattedTime=moment(message.createdAt).format('LT');//to change the time stamp into formatted form using moment.js doc
     console.log("new Message", message);
     let li = document.createElement('li');
-    li.innerText = `${message.from}: ${message.text}`;
+    li.innerText = `${message.from} ${formattedTime}: ${message.text}`;
 
     document.querySelector('body').appendChild(li);
 });
@@ -20,8 +21,10 @@ socket.on('newMessage', function (message) {
 //client listening to message created by the server
 socket.on('newLocationMessage', function (message) {
     console.log("newLocationMessage", message);
+    const formattedTime=moment(message.createdAt).format('LT');
     let li = document.createElement('li');
     let a=document.createElement('a');
+    li.innerText = `${message.from} ${formattedTime}: `;
     a.setAttribute('target','_blank');  //open another tab
     a.setAttribute('href',message.url)
     a.innerText='My Current Location';
