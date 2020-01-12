@@ -1,19 +1,20 @@
 const path = require("path");
-express = require("express"),
-    http = require("http"),
-    socketIO = require("socket.io"),
-    moment = require("moment"),
-    {Users}=require("./utils/users"),
-    { isRealString } = require("./utils/isRealString"),
-    { generateMessage, generateLocationMessage } = require("./utils/message"),
-    app = express();
+      express = require("express"),
+      http = require("http"),
+      socketIO = require("socket.io"),
+      moment = require("moment"),
+      app = express();
 
-app.use(express.static(path.join(__dirname, './../public')));
+const { Users } = require("./utils/users"),
+      { isRealString } = require("./utils/isRealString"),
+      { generateMessage, generateLocationMessage, generateTypingMessage } = require("./utils/message");
 
 let server = http.createServer(app);
 let io = socketIO(server);
 const PORT = process.env.PORT || 9000;
-let users=new Users();
+let users = new Users();
+
+app.use(express.static(path.join(__dirname, './../public')));
 
 //listen to an event
 io.on('connection', (socket) => {
@@ -29,7 +30,7 @@ io.on('connection', (socket) => {
 
         socket.join(params.room);
         users.removeUser(socket.id); //removing the user if it is in some othr room
-        users.addUser(socket.id, params.name, params.room);  
+        users.addUser(socket.id, params.name, params.room);
 
         io.to(params.room).emit('updateUsersList', users.getUserList(params.room));
 
@@ -43,13 +44,12 @@ io.on('connection', (socket) => {
 
     //server listening to the message created by client
     socket.on('createMessage', (message, callback) => {
+        let user = users.getUser(socket.id);
 
-        let user=users.getUser(socket.id);
+        if (user && isRealString(message.text)) {
 
-        if(user && isRealString(message.text)){
-            
-        //socket.emit will send personally whereas io.emit will send to all even to self i.e. broadcast the message
-         io.to(user.room).emit('newMessage', generateMessage(user.name, message.text));
+            //socket.emit will send personally whereas io.emit will send to all even to self i.e. broadcast the message
+            io.to(user.room).emit('newMessage', generateMessage(user.name, message.text));
         }
 
         callback('This is the server: ');
@@ -61,30 +61,38 @@ io.on('connection', (socket) => {
         //     text: message.text,
         //     createdAt: new Date().getTime()
         // })
-    })
+    });
 
     socket.on('createLocationMessage', (coords) => {
-        let user=users.getUser(socket.id);
-        if(user){
+        let user = users.getUser(socket.id);
 
+        if (user) {
             io.to(user.room).emit('newLocationMessage', generateLocationMessage(user.name, coords.lat, coords.lng));
+        }
+    });
 
-        }    })
+    //listening the typing event
+    socket.on('typing', ()=>{
+        let user=users.getUser(socket.id);
+
+        if(user){
+            socket.broadcast.to(user.room).emit('newTypingMessage',generateTypingMessage(user.name));
+        }
+    })
 
     socket.on('disconnect', () => {
         //whenever a user disconnects or refreshes the page 
 
         //store the user
-        let user=users.removeUser(socket.id);
+        let user = users.removeUser(socket.id);
 
         //if user is found remove the user
-        if(user){
+        if (user) {
             io.to(user.room).emit('updateUsersList', users.getUserList(user.room));
             io.to(user.room).emit('newMessage', generateMessage('Admin', `${user.name} has left ${user.room} chat room`));
         }
-        console.log('User disconnected');
-    })
-})
+    });
+});
 
 
 server.listen(PORT, function () {
