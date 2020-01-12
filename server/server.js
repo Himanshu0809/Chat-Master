@@ -17,17 +17,20 @@ const PORT = process.env.PORT || 9000;
 io.on('connection', (socket) => {
     console.log("New user connected");
 
-    //to send the message to the new user
-    socket.emit('newMessage', generateMessage('Admin', 'Welcome to ChatMaster!'));
-
-    //to send the message to all others in the chat that someone has joined
-    socket.broadcast.emit('newMessage',generateMessage('Admin', 'New User Joined!'));
-
+    //socket function join to create rooms and join members to it
     socket.on('join', (params, callback)=>{
         //validation to remove space leading and trailing spaces
         if(!isRealString(params.name)||!isRealString(params.room)){
             callback('Name and Room are required');
         }
+
+        socket.join(params.room);
+
+        //to send the message to the new user
+    socket.emit('newMessage', generateMessage('Admin', `Welcome to ${params.room}`));
+
+    //to send the message to all others in the chat that someone has joined
+    socket.broadcast.emit('newMessage',generateMessage('Admin', 'New User Joined!'));
         callback();
     })
 
