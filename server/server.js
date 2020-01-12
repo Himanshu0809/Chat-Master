@@ -3,6 +3,7 @@ express = require("express"),
     http = require("http"),
     socketIO = require("socket.io"),
     moment = require("moment"),
+    {Users}=require("./utils/users"),
     { isRealString } = require("./utils/isRealString"),
     { generateMessage, generateLocationMessage } = require("./utils/message"),
     app = express();
@@ -12,6 +13,7 @@ app.use(express.static(path.join(__dirname, './../public')));
 let server = http.createServer(app);
 let io = socketIO(server);
 const PORT = process.env.PORT || 9000;
+let users=new Users();
 
 //listen to an event
 io.on('connection', (socket) => {
@@ -22,10 +24,14 @@ io.on('connection', (socket) => {
     socket.on('join', (params, callback) => {
         //validation to remove space leading and trailing spaces
         if (!isRealString(params.name) || !isRealString(params.room)) {
-            callback('Name and Room are required');
+            return callback('Name and Room are required');
         }
 
         socket.join(params.room);
+        users.removeUser(socket.id); //removing the user if it is in some othr room
+        users.addUser(socket.id, params.name, params.room);  
+
+        io.to(params.room).emit('updateUsersList', users.getUserList(params.room));
 
         //to send the message to the new user
         socket.emit('newMessage', generateMessage('Admin', `Welcome to ${params.room}`));
@@ -56,6 +62,16 @@ io.on('connection', (socket) => {
     })
 
     socket.on('disconnect', () => {
+        //whenever a user disconnects or refreshes the page 
+
+        //store the user
+        let user=users.removeUser(socket.id);
+
+        //if user is found remove the user
+        if(user){
+            io.to(user.room).emit('updateUsersList', users.getUserList(user.room));
+            io.to(user.room).emit('newMessage', generateMessage('Admin', `${user.name} has left ${user.room} chat room`));
+        }
         console.log('User disconnected');
     })
 })
