@@ -1,5 +1,10 @@
 let socket = io();    //this makes a request to the backend or the server which will respond
 
+function scrollToBottom(){
+    let messages=document.querySelector("#messages").lastElementChild; //grabbing the last li elements or the last message inputted by the user or admin
+    messages.scrollIntoView(); //JS method to scroll to view if we dont see it
+}
+
 socket.on('connect', function () {
     console.log('Connected to Server');
 });
@@ -20,6 +25,7 @@ socket.on('newMessage', function (message) {
     const div = document.createElement('div');
     div.innerHTML=html;
     document.querySelector("#messages").appendChild(div);
+    scrollToBottom();
 });
 
 //client listening to message created by the server
