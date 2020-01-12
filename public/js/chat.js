@@ -66,6 +66,7 @@ socket.on('newLocationMessage', function (message) {
     const div = document.createElement('div');
     div.innerHTML=html;
     document.querySelector("#messages").appendChild(div);
+    scrollToBottom();
 });
 
 document.querySelector('#submit-btn').addEventListener('click', function (e) {

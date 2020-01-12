@@ -64,8 +64,12 @@ io.on('connection', (socket) => {
     })
 
     socket.on('createLocationMessage', (coords) => {
-        io.emit('newLocationMessage', generateLocationMessage('Admin', coords.lat, coords.lng));
-    })
+        let user=users.getUser(socket.id);
+        if(user){
+
+            io.to(user.room).emit('newLocationMessage', generateLocationMessage(user.name, coords.lat, coords.lng));
+
+        }    })
 
     socket.on('disconnect', () => {
         //whenever a user disconnects or refreshes the page 
