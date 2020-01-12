@@ -1,10 +1,10 @@
 const path = require("path");
-    express = require("express"),
+express = require("express"),
     http = require("http"),
     socketIO = require("socket.io"),
-    moment=require("moment"),
-    {isRealString}=require("./utils/isRealString"),
-    {generateMessage, generateLocationMessage}=require("./utils/message"),
+    moment = require("moment"),
+    { isRealString } = require("./utils/isRealString"),
+    { generateMessage, generateLocationMessage } = require("./utils/message"),
     app = express();
 
 app.use(express.static(path.join(__dirname, './../public')));
@@ -18,19 +18,19 @@ io.on('connection', (socket) => {
     console.log("New user connected");
 
     //socket function join to create rooms and join members to it
-    socket.on('join', (params, callback)=>{
+    socket.on('join', (params, callback) => {
         //validation to remove space leading and trailing spaces
-        if(!isRealString(params.name)||!isRealString(params.room)){
+        if (!isRealString(params.name) || !isRealString(params.room)) {
             callback('Name and Room are required');
         }
 
         socket.join(params.room);
 
         //to send the message to the new user
-    socket.emit('newMessage', generateMessage('Admin', `Welcome to ${params.room}`));
+        socket.emit('newMessage', generateMessage('Admin', `Welcome to ${params.room}`));
 
-    //to send the message to all others in the chat that someone has joined
-    socket.broadcast.emit('newMessage',generateMessage('Admin', 'New User Joined!'));
+        //to send the message to all others in the chat that someone has joined
+        socket.broadcast.to(params.room).emit('newMessage', generateMessage('Admin', 'New User Joined!'));
         callback();
     })
 
@@ -50,8 +50,8 @@ io.on('connection', (socket) => {
         // })
     })
 
-    socket.on('createLocationMessage', (coords)=>{
-        io.emit('newLocationMessage', generateLocationMessage('Admin',coords.lat, coords.lng));
+    socket.on('createLocationMessage', (coords) => {
+        io.emit('newLocationMessage', generateLocationMessage('Admin', coords.lat, coords.lng));
     })
 
     socket.on('disconnect', () => {
