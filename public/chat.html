@@ -1,11 +1,12 @@
 <!DOCTYPE html>
-<html lang="en" dir="ltr">
+<html lang="en">
 
 <head>
-    <meta charset="utf-8">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable-no">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <link rel="stylesheet" type="text/css" href="css/style.css">
     <title></title>
-    <meta name="viewport" content="width=device-width, inital-scale=1, user-scalable=no">
-    <link rel="stylesheet" href="/css/styles.css">
 </head>
 
 <body class="chat">
@@ -20,41 +21,47 @@
 
         <div class="chat__footer">
             <form id="message-form">
-                <input name="message" type="text" placeholder="Message" autofocus autocomplete="off" />
+                <input type="text" name="message" placeholder="Message" autofocus autocomplete="off" >
                 <button id="submit-btn">Send</button>
             </form>
-            <button id="send-location">Send location</button>
+            <button id="send-location">Send Location</button>
         </div>
     </div>
 
+    <!-- Script tag for mustache.js
+        Mustache.js is used to make a template so we need not to do it with js using setAttribute, appendChild, innerHTML tags -->
+    <!-- Template for messages -->
     <script id="message-template" type="text/template">
-      <li class="message">
-        <div class="message__title">
-          <h4>{{from}}</h4>
-          <span>{{createdAt}}</span>
-        </div>
-        <div class="message__body">
-          <p>{{text}}</p>
-        </div>
-      </li>
+        <li class="message">
+            <div class="message__title">
+                <h4>{{from}}</h4>
+                <span>{{createdAt}}</span>
+            </div>
+            <div class="message__body">
+                <p>{{text}}</p>
+            </div>
+        </li>
     </script>
 
+    <!-- Template for location -->
     <script id="location-message-template" type="text/template">
-      <li class="message">
-        <div class="message__title">
-          <h4>{{from}}</h4>
-          <span>{{createdAt}}</span>
-        </div>
-        <div class="message__body">
-          <a href="{{url}}" target="_blank">My current location</a>
-        </div>
-      </li>
+        <li class="message">
+            <div class="message__title">
+                <h4>{{from}}</h4>
+                <span>{{createdAt}}</span>
+            </div>
+            <div class="message__body">
+                <a href="{{url}}" target="_blank">My current Location</a>
+            </div>
+        </li>
     </script>
 
-    <script src="/socket.io/socket.io.js"></script>
-    <script type="text/javascript" src="/js/chat.js"></script>
-    <script type="text/javascript" src="/js/libs/moment.js"></script>
-    <script type="text/javascript" src="/js/libs/mustache.js"></script>
+    
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.3.0/socket.io.slim.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.24.0/moment.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/mustache.js/3.1.0/mustache.min.js"></script>
+    <script type="text/javascript" src="js/chat.js"></script>
 </body>
 
 </html>
