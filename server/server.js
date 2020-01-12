@@ -43,9 +43,15 @@ io.on('connection', (socket) => {
 
     //server listening to the message created by client
     socket.on('createMessage', (message, callback) => {
-        console.log("message created", message);
+
+        let user=users.getUser(socket.id);
+
+        if(user && isRealString(message.text)){
+            
         //socket.emit will send personally whereas io.emit will send to all even to self i.e. broadcast the message
-        io.emit('newMessage', generateMessage(message.from, message.text));
+         io.to(user.room).emit('newMessage', generateMessage(user.name, message.text));
+        }
+
         callback('This is the server: ');
 
         //server creating or emitting a message
