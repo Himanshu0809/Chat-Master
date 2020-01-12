@@ -17,6 +17,7 @@ const PORT = process.env.PORT || 9000;
 io.on('connection', (socket) => {
     console.log("New user connected");
 
+    // console.log(socket.id)   //every socket has unique id
     //socket function join to create rooms and join members to it
     socket.on('join', (params, callback) => {
         //validation to remove space leading and trailing spaces
