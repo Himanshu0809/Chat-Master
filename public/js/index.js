@@ -24,17 +24,17 @@ socket.on('newMessage', function (message) {
 
 //client listening to message created by the server
 socket.on('newLocationMessage', function (message) {
-    console.log("newLocationMessage", message);
     const formattedTime=moment(message.createdAt).format('LT');
-    let li = document.createElement('li');
-    let a=document.createElement('a');
-    li.innerText = `${message.from} ${formattedTime}: `;
-    a.setAttribute('target','_blank');  //open another tab
-    a.setAttribute('href',message.url)
-    a.innerText='My Current Location';
-    li.appendChild(a) ;
-
-    document.querySelector('messages').appendChild(li);
+    const template=document.querySelector("#location-message-template").innerHTML;
+    console.log("newLocationMessage", message);
+    const html=Mustache.render(template,{
+        from: message.from,
+        url:message.url,
+        createdAt:formattedTime
+    });
+    const div = document.createElement('div');
+    div.innerHTML=html;
+    document.querySelector("#messages").appendChild(div);
 });
 
 document.querySelector('#submit-btn').addEventListener('click', function (e) {

@@ -30,6 +30,7 @@
 
     <!-- Script tag for mustache.js
         Mustache.js is used to make a template so we need not to do it with js using setAttribute, appendChild, innerHTML tags -->
+    <!-- Template for messages -->
     <script id="message-template" type="text/template">
         <li class="message">
             <div class="message__title">
@@ -41,7 +42,19 @@
             </div>
         </li>
     </script>
-    
+
+    <!-- Template for location -->
+    <script id="location-message-template" type="text/template">
+        <li class="message">
+            <div class="message__title">
+                <h4>{{from}}</h4>
+                <span>{{createdAt}}</span>
+            </div>
+            <div class="message__body">
+                <a href="{{url}}" target="_blank">My current Location</a>
+            </div>
+        </li>
+    </script>
 
     
     <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.3.0/socket.io.slim.js"></script>
