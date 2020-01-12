@@ -3,6 +3,7 @@ const path = require("path");
     http = require("http"),
     socketIO = require("socket.io"),
     moment=require("moment"),
+    {isRealString}=require("./utils/isRealString"),
     {generateMessage, generateLocationMessage}=require("./utils/message"),
     app = express();
 
@@ -21,6 +22,14 @@ io.on('connection', (socket) => {
 
     //to send the message to all others in the chat that someone has joined
     socket.broadcast.emit('newMessage',generateMessage('Admin', 'New User Joined!'));
+
+    socket.on('join', (params, callback)=>{
+        //validation to remove space leading and trailing spaces
+        if(!isRealString(params.name)||!isRealString(params.room)){
+            callback('Name and Room are required');
+        }
+        callback();
+    })
 
     //server listening to the message created by client
     socket.on('createMessage', (message, callback) => {
